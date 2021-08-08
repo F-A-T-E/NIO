@@ -1,9 +1,9 @@
 package com.netty.lv.nio.tcp;
 
 import sun.misc.Unsafe;
-
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
@@ -23,23 +23,22 @@ public class TcpServer {
 
 	public static class Handler implements Runnable {
 
-
-
 		private Socket socket;
 
 		public Handler(Socket socket) {
 			this.socket = socket;
 		}
-
 		@Override
 		public void run() {
 			int readNum = 0;
 			byte[] content = new byte[1024];
 			try {
 				InputStream in = socket.getInputStream();
+				OutputStream out = socket.getOutputStream();
 				while ((readNum = in.read(content)) != -1) {
 					byte[] realContent = new byte[readNum];
 					System.out.println(new String(Arrays.copyOf(content,readNum)));
+					out.write("hello client".getBytes());
 				}
 				socket.close();
 			} catch (IOException e) {
@@ -50,7 +49,6 @@ public class TcpServer {
 					ioException.printStackTrace();
 				}
 			}
-
 		}
 
 	}
