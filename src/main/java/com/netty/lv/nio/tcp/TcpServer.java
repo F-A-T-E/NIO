@@ -1,6 +1,5 @@
 package com.netty.lv.nio.tcp;
 
-import sun.misc.Unsafe;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,9 +13,9 @@ public class TcpServer {
 	public static void main(String[] args) throws Exception {
 		ServerSocket serverSocket = new ServerSocket(8080);
 		while (true) {
-			System.out.println("等待客户端连接。。。");
+			System.out.println("等待客户端连接...");
 			Socket socket = serverSocket.accept();
-			System.out.println("客户端连接成功。。。" + socket.getRemoteSocketAddress());
+			System.out.println("客户端连接成功..." + socket.getRemoteSocketAddress());
 			new Thread(new Handler(socket)).start();
 		}
 	}
@@ -50,15 +49,5 @@ public class TcpServer {
 				}
 			}
 		}
-
 	}
 }
-
-
-
-
-
-
-
-
-
