@@ -12,9 +12,11 @@ public class MyChannel {
 	private SocketChannel channel;
 	private EventLoop eventLoop;
 	private Queue<ByteBuffer> writeQueue = new ArrayBlockingQueue<>(16);
+	private PPLine ppLine;
 	public MyChannel(SocketChannel channel,EventLoop eventLoop){
 		 this.channel = channel;
 		 this.eventLoop = eventLoop;
+		 this.ppLine = new PPLine(this,eventLoop);
 	}
 	public void read(SelectionKey key) throws IOException {
 
