@@ -10,6 +10,7 @@ public class InboundHandlerA extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		log.debug("channelRead->" + msg.toString());
-		ctx.fireChannelRead(msg);
+		super.channelRead(ctx, msg);
+		ctx.channel().writeAndFlush(ctx.alloc().buffer(16).writeBytes("hello".getBytes()));
 	}
 }
