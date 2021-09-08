@@ -39,6 +39,7 @@ public class DiscardServer {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
 							ch.pipeline().addLast(new DiscardServerHandler());
+							ch.pipeline().addLast("aa",new SecondHandler());
 						}
 					});
 /*
@@ -54,7 +55,6 @@ public class DiscardServer {
 			bossGroup.shutdownGracefully();
 		}
 	}
-
 
 	public static void main(String[] args) throws Exception {
 		new DiscardServer().run(8080);
