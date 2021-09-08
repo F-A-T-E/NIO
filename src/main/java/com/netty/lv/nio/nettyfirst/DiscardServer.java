@@ -38,8 +38,13 @@ public class DiscardServer {
 					.childHandler(new ChannelInitializer<SocketChannel>() {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
-							ch.pipeline().addLast(new DiscardServerHandler());
-							ch.pipeline().addLast("aa",new SecondHandler());
+//							ch.pipeline().addLast(new DiscardServerHandler());
+//							ch.pipeline().addLast("aa",new SecondHandler());
+						ch.pipeline().addLast("1",new InboundHandlerA());
+						ch.pipeline().addLast("2",new InboundHandlerB());
+						ch.pipeline().addLast("3",new OutboundHandlerA());
+						ch.pipeline().addLast("4",new OutboundHandlerB());
+						ch.pipeline().addLast("5",new InboundOutboundHandlerX());
 						}
 					});
 /*
