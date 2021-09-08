@@ -8,6 +8,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.sctp.nio.NioSctpServerChannel;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class DiscardServer {
 
@@ -21,14 +22,19 @@ public class DiscardServer {
 	}
 
 	public void run(int port) throws Exception{
-//		BOSS 是专门处理连接的，一个端口只用一个就够了
+//		BOSS 是专门处理连接的，一个端口只用一个就够了（ServerSocketChannel）
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-//		Work线程是专门处理IO事件的，一般设置为256-512之间
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
+//		Work线程是专门处理IO事件的，一般设置为256-512之间（SocketChannel）
+		EventLoopGroup workerGroup = new NioEventLoopGroup(16);
+
 		try{
+			//启动的引导类，可以让程序员配置信息
 			ServerBootstrap b = new ServerBootstrap();
+//			把线程组设置进去
 			b.group(bossGroup,workerGroup)
-					.channel(NioSctpServerChannel.class)
+//					设置IO模型，使用的是java的NIO模型
+					.channel(NioServerSocketChannel.class)
+//					配置channel-PPline当中的handler（编解码器）
 					.childHandler(new ChannelInitializer<SocketChannel>() {
 						@Override
 						protected void initChannel(SocketChannel ch) throws Exception {
@@ -39,7 +45,9 @@ public class DiscardServer {
 					.option(ChannelOption.SO_BACKLOG,128)
 					.childOption(ChannelOption.SO_KEEPALIVE,true);
 */
+//			绑定端口
 			ChannelFuture f = b.bind(port).sync();
+//			阻塞当前线程直到Server端关闭
 			f.channel().closeFuture().sync();
 		}finally {
 			workerGroup.shutdownGracefully();

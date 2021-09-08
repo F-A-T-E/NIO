@@ -13,7 +13,8 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 			int count = buf.readableBytes();
 			byte[] content = new byte[count];
 			buf.readBytes(content);
-			System.out.println(new String(content));
+			String str = new String(content);
+			ctx.fireChannelRead(str);
 		}finally {
 			buf.release();
 		}
