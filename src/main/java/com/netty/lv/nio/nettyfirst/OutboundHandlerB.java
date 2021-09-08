@@ -12,5 +12,8 @@ public class OutboundHandlerB extends ChannelOutboundHandlerAdapter {
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		log.debug("write->" + msg.toString());
 		super.write(ctx, msg, promise);
+
+		ctx.writeAndFlush(ctx.alloc().buffer(16).writeBytes("hello".getBytes()));
+
 	}
 }
