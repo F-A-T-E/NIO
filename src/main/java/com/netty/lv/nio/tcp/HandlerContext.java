@@ -34,6 +34,11 @@ public class HandlerContext {
 	}
 
 
+	public MyChannel getMyChannel(){
+		return myChannel;
+	}
+
+
 
 
 

@@ -17,6 +17,8 @@ public class MyChannel {
 		 this.channel = channel;
 		 this.eventLoop = eventLoop;
 		 this.ppLine = new PPLine(this,eventLoop);
+		 this.ppLine.addLast(new MyHandler1());
+		 this.ppLine.addLast(new MyHandler2());
 	}
 	public void read(SelectionKey key) throws IOException {
 
@@ -31,18 +33,8 @@ public class MyChannel {
 				return;
 			}
 			buffer.flip();
-			byte[] bytes = new byte[readNum];
-			buffer.get(bytes,0,readNum);
-			String clientData = new String(bytes);
-			System.out.println(clientData);
-//          加入写缓冲区
-			writeQueue.add(ByteBuffer.wrap("hello".getBytes()));
+			this.ppLine.headCtx.fireChannelRead(buffer);
 
-//			key.attach("hello client".getBytes());
-			if(clientData.equals("flush")){
-//				把Key关注的事件切换为OP_WRITE
-				key.interestOps(SelectionKey.OP_WRITE);
-			}
 
 		} catch (IOException e) {
 			System.out.println("读取时发生异常 关闭socket");
@@ -67,4 +59,15 @@ public class MyChannel {
 		}*/
 		key.interestOps(SelectionKey.OP_READ);
 	}
+	public void doWrite(Object msg) {
+		this.ppLine.tailCtx.write(msg);
+	}
+	public void addWriteQueue(ByteBuffer buffer){
+		writeQueue.add(buffer);
+	}
+
+	public void flush(){
+		this.ppLine.tailCtx.flush();
+	}
+
 }
