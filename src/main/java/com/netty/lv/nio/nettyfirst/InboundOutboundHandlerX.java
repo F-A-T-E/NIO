@@ -12,8 +12,7 @@ public class InboundOutboundHandlerX extends ChannelDuplexHandler {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		log.debug(msg.toString());
 		super.channelRead(ctx, msg);
-
-		ctx.channel().writeAndFlush(ctx.alloc().buffer(16).writeBytes("hello".getBytes()));
+		ctx.channel().writeAndFlush( ctx.alloc().buffer(16).writeBytes("hello".getBytes()));
 	}
 
 	@Override
