@@ -1,11 +1,13 @@
 package com.netty.lv.nio.tcp;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
@@ -32,7 +34,9 @@ public class EventLoop implements Runnable{
 		//把注册的逻辑封装成一个任务
 		taskQueue.add(()->{
 			try {
-				channel.register(selector,keyOps);
+				MyChannel myChannel = new MyChannel(channel,this);
+				SelectionKey selectionKey = channel.register(selector,keyOps);
+				selectionKey.attach(myChannel);
 			} catch (ClosedChannelException e) {
 				e.printStackTrace();
 			}
@@ -48,13 +52,20 @@ public class EventLoop implements Runnable{
 				System.out.println(thread + "开始查询IO事件...");
 				int eventNum = selector.select();
 				System.out.println("系统发生IO事件 数量->" + eventNum);
-
-
 				Set<SelectionKey> keySet = selector.selectedKeys();
 				Iterator<SelectionKey> iterable = keySet.iterator();
 				while(iterable.hasNext()){
 					SelectionKey key = iterable.next();
 					iterable.remove();
+//					可读事件
+					MyChannel myChannel =  (MyChannel) key.attachment();
+					if(key.isReadable()){
+						myChannel.read(key);
+					}
+//					可写事件
+					if (key.isWritable()) {
+						myChannel.write(key);
+					}
 				}
 				taskQueue.poll();
 			} catch (IOException e) {

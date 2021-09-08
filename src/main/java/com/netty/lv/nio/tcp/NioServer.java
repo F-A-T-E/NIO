@@ -25,6 +25,8 @@ public class NioServer {
 
 		//把ServerSocketChannel注册到事件查询器上，并且关注OP_ACCEPT事件
 		serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+		//创建一组事件查询器
+		EventLoopGroup eventLoopGroup = new EventLoopGroup();
 
 		while (true){
 			//阻塞方法，等待系统有IO事件发生
@@ -47,7 +49,8 @@ public class NioServer {
 					socketChannel.configureBlocking(false);
 					System.out.println("服务器接收了一个新的连接" + socketChannel.getRemoteAddress());
 					//把socketChannel注册到事件查询器上，并且关注OP_READ事件
-					socketChannel.register(selector, SelectionKey.OP_READ);
+//					socketChannel.register(selector, SelectionKey.OP_READ);
+					eventLoopGroup.register(socketChannel,SelectionKey.OP_READ);
 				}
 				//可读事件
 				if(key.isReadable()){

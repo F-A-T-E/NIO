@@ -1,6 +1,8 @@
 package com.netty.lv.nio.tcp;
 
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
+import java.nio.channels.SocketChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EventLoopGroup {
@@ -20,4 +22,9 @@ public class EventLoopGroup {
 		return eventLoops[idx.getAndIncrement() & eventLoops.length - 1];
 	}
 
+	public void register(SocketChannel channel, int keyOps) throws ClosedChannelException {
+		next().register(channel, keyOps);
+
+
+	}
 }
