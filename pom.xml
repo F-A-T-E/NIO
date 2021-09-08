@@ -76,7 +76,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.3.7.RELEASE</version>
                 <configuration>
-                    <mainClass>com.netty.lv.nio.NioApplication</mainClass>
+                    <mainClass>com.netty.web.NioApplication</mainClass>
                 </configuration>
                 <executions>
                     <execution>
