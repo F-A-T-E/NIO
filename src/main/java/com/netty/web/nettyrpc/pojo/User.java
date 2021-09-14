@@ -1,12 +1,22 @@
 package com.netty.web.nettyrpc.pojo;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class User {
+public class User implements Serializable {
 
 	private int age;
 	private Date birthday;
 	private String name;
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"age=" + age +
+				", birthday=" + birthday +
+				", name='" + name + '\'' +
+				'}';
+	}
 
 	public User(){
 

@@ -2,7 +2,6 @@ package com.netty.web.nettyrpc.client;
 
 import com.netty.web.nettyrpc.pojo.RpcService;
 import com.netty.web.nettyrpc.pojo.RpcServiceHandler;
-import com.netty.web.nettyrpc.server.RpcServer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -18,38 +17,34 @@ import java.lang.reflect.Proxy;
 
 public class RpcClientFactory {
 
+	private ClientMsgHandler handler = new ClientMsgHandler();
+
+
 	public static void main(String[] args) {
 		RpcService rpcService = getRpcService();
 		rpcService.rpcLogin("admin","123456");
 
 	}
-	public RpcClientFactory(String ip, int port){
+	public  RpcClientFactory(String ip, int port) throws InterruptedException {
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-		try{
 			Bootstrap b = new Bootstrap();
 			b.group(bossGroup)
 					.channel(NioSocketChannel.class)
 					.handler(new ChannelInitializer<SocketChannel>() {
 						@Override
-						protected void initChannel(SocketChannel ch) throws Exception {
-							ch.pipeline().addLast("ObjectEncoder",new ObjectEncoder());
-							ch.pipeline().addLast("ObjectEncoder",new ObjectDecoder(Integer.MAX_VALUE,
+						protected void initChannel(SocketChannel ch) {
+							ch.pipeline().addLast("ObjectEncoder", new ObjectEncoder());
+							ch.pipeline().addLast("ObjectEncoder", new ObjectDecoder(Integer.MAX_VALUE,
 									ClassResolvers.weakCachingResolver(null)));
-							ch.pipeline().addLast("handler",new ClientMsgHandler());
+							ch.pipeline().addLast("handler", new ClientMsgHandler());
 						}
 					});
-			ChannelFuture f = b.connect(ip,port).sync();
-			f.channel().closeFuture().sync();
-		}catch(InterruptedException e){
-			e.printStackTrace();
-		}finally {
-			bossGroup.shutdownGracefully();
-		}
-
+			b.connect(ip, port).sync();
 	}
 
 	public static RpcService getRpcService(){
 		return (RpcService) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
 				new Class[]{RpcService.class},new RpcServiceHandler());
 	}
+
 }
