@@ -15,6 +15,12 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 public class HttpHelloWorldServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 	private static final byte[] CONTENT = {'H','e','l','l','o',' ','W','o','r','l','d'};
+
+	@Override
+	public void channelReadComplete(ChannelHandlerContext ctx) {
+		ctx.flush();
+	}
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, HttpObject httpObject) throws Exception {
 

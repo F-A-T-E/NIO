@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 
 public class NettyHttpServer {
 
+
 	public void run(int port) throws Exception {
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 		EventLoopGroup workerGroup = new NioEventLoopGroup(16);
@@ -24,10 +25,12 @@ public class NettyHttpServer {
 					.childHandler(new ChannelInitializer<SocketChannel>() {
 						@Override
 						public void initChannel(SocketChannel ch) {
+//							解码器
 							ch.pipeline().addLast("http-decoder",new HttpRequestDecoder());
+//							编码器
 							ch.pipeline().addLast("http-encoder",new HttpResponseEncoder());
+//
 							ch.pipeline().addLast("aggregator",new HttpObjectAggregator(655360));
-							ch.pipeline().addLast("serverHandler",new HttpHelloWorldServerHandler());
 						}
 					});
 			ChannelFuture f = b.bind(port).sync();
